@@ -1,54 +1,57 @@
-# include "Array.hpp"
+template<typename T>
+Array<T>::Array() : array(NULL), array_size(0) {}
 
 template<typename T>
-Array<T>::Array()
-{
-    T new_array[0];
-    array = new_array;
-
-}
-
-template<typename T>
-Array<T>::Array(unsigned int n)
-{
-    array = new T[n];
-}
+Array<T>::Array(unsigned int n) : array(new T[n]), array_size(n){}
 
 template <typename T>
 Array<T>::Array(const Array &other)
 {
-    *this = other;
+    array_size = other.size();
+    array = new T[array_size];
+    for (unsigned int i = 0; i < array_size; i++)
+        array[i] = other.array[i];
 }
 
 template <typename T>
 Array<T> &Array<T>::operator=(const Array &other)
 {
     if (this != &other)
-        *this = other;
+    {
+        delete [] array;
+        array_size = other.size();
+        array = new T[array_size];
+        for (unsigned int i = 0; i < array_size; i++)
+            array[i] = other.array[i];
+    }
     return *this;
 }
 
 
 template <typename T>
-T &Array<T>::operator[](int index)
+T &Array<T>::operator[](unsigned int index)
 {
-    if (index < 0 || static_cast<size_t>index >= size())
-        throw std::exception();
+    if (index >= size())
+        throw std::out_of_range("Index is out of bounds\n");
     return(array[index]);
 }
 
 template <typename T>
-T Array<T>::operator[](int index) const
+const T &Array<T>::operator[](unsigned int index) const
 {
-    if (index < 0 || static_cast<size_t>index >= size())
-        throw std::exception();
+    if (index >= size())
+        throw std::out_of_range("Index is out of bounds\n");
     return(array[index]);
 }
 
-
 template <typename T>
-size_t Array<T>::size() const
+unsigned int Array<T>::size() const
 {
-    size_t  array_size = sizeof(array) / sizeof(T);
     return array_size;
+}
+
+template <typename T>
+Array<T>::~Array()
+{
+    delete []array;
 }
